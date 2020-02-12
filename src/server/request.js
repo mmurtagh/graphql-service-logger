@@ -1,69 +1,42 @@
-function createRequest (request = {}) {
-    if (typeof request !== 'object') {
-        throw _createError()
+export const requests = {}
+
+export function getRequest (id) {
+    return requests[id]
+}
+
+export function createRequest (id, timeStamp) {
+    requests[id] = new Request(id, timeStamp)
+}
+
+export class Request {
+    serviceCalls = []
+
+    constructor (id, timeStamp) {
+        this.id = id
+        this.timeStamp = timeStamp
     }
 
-    const requiredKeys = [
-        'id',
-        'startTime',
-        'completeTime',
-        'name',
-        'tags'
-    ]
+    set query (query) {
+        this._query = query
+    }
 
-    const isObjectValid = requiredKeys.every((key) => {
-        if (!Object.keys(request).includes(key)) return false
+    get query () {
+        return this._query
+    }
 
-        let isKeyValid = true
-        switch (key) {
-            case 'id':
-                isKeyValid = typeof request['id'] === 'string'
-                break
-            case 'startTime':
-                isKeyValid = typeof request['startTime'] === 'number'
-                break
-            case 'name':
-                isKeyValid = typeof request['name'] === 'string'
-                break
-            case 'tags':
-                const tags = request['tags']
+    addServiceCall (serviceCall) {
+        this.serviceCalls.push(serviceCall)
+    }
 
-                if (typeof tags === 'undefined') {
-                    isKeyValid = true
-                    break
-                }
-                if (typeof tags !== 'array') {
-                    isKeyValid = false
-                    break
-                }
-                isKeyValid = tags.every((tag) => typeof tag === 'string')
-                break
+    get json () {
+        const { id, _query, timeStamp, serviceCalls } = this
+
+        return {
+            id,
+            query: _query,
+            timeStamp,
+            serviceCalls: serviceCalls.map((serviceCall) => serviceCall.json)
         }
-    })
-
-    if (!isObjectValid) throw _createError()
-
-    const {
-        id,
-        startTime,
-        completeTime,
-        name,
-        tags = []
-    } = request
-
-    return {
-        id,
-        startTime: new Date(startTime),
-        endTime: new Date(completeTime),
-        name,
-        tags,
     }
 }
 
-function _createError (message = 'Invalid Request') {
-    return new Error(message)
-}
-
-function validateRequest () {
-
-}
