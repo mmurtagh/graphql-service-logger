@@ -1,5 +1,5 @@
 import express, { request } from 'express'
-import { createRequest, getRequest, Request, requests } from './request'
+import { createRequest, getRequest, getRequests } from './request'
 import { ServiceCall } from './serviceCall'
 
 class Logger {
@@ -12,7 +12,9 @@ class Logger {
         app.use(express.json())
         app.use(express.static(`${__dirname}/../client/build`));
 
-        app.get('/log/service-request', (req,res) => res.json(this.requests))
+        app.get('/log/service-request', (req,res) => res.json(getRequests()))
+
+        app.get('/')
 
         app.listen(Logger.port, () => console.log('Listening'))
     }
@@ -32,7 +34,7 @@ class Logger {
     }
 
     printRequests () {
-        const requestList = Object.keys(requests).map((key) => getRequest(key).json)
+        const requestList = getRequests()
 
         console.log(JSON.stringify(requestList))
     }

@@ -1,20 +1,26 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Tab from 'react-bootstrap/Tab'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 import Container from 'react-bootstrap/Container'
 import ListGroup from 'react-bootstrap/ListGroup'
-import Button from 'react-bootstrap/Button'
+import Card from 'react-bootstrap/Card'
 import moment from 'moment'
+import fetch from 'node-fetch'
+
+import { ServiceCall } from './ServiceCall'
 
 
 export function App(props) {
   const [ requests, setRequests ] = useState([])
+  useEffect(() => {
+    poll()
+  }, [])
 
   const renderRequest = (
     {
-      isDark,
+      id,
       query,
       timeStamp,
     },
@@ -23,7 +29,8 @@ export function App(props) {
     return (
       <ListGroup.Item
         action
-        variant={isDark ? 'secondary' : 'light'}
+        eventKey={id}
+        variant="dark"
       >
         <Container>
             <Row>
@@ -39,6 +46,37 @@ export function App(props) {
     )  
   }
 
+  const renderDetail = ({ id, serviceCalls }) => {
+
+    return (
+      <Tab.Pane eventKey={id} style={{ padding: 16 }}>
+        <Card bg="dark" text="white" >
+          <Card.Body>
+          <Card.Title>Service Calls</Card.Title>
+            {serviceCalls.map((serviceCall) => {
+              return <ServiceCall {...serviceCall} />
+            })}
+          </Card.Body>
+        </Card>
+      </Tab.Pane>
+    )
+  }
+
+  const poll = () => {
+    fetch('http://localhost:5000/log/service-request')
+      .then(async (res) => {
+        const currentRequests = await res.json()
+        if (currentRequests.length !== requests.length) {
+          setRequests(currentRequests)
+        }
+
+        setTimeout(poll, 100)
+      })
+      .catch((e) => {
+        setTimeout(poll, 2000)
+      })
+  }
+
   const onRequestPress = () => {
     const requestCopy = requests.slice()
     requestCopy.unshift({
@@ -52,35 +90,24 @@ export function App(props) {
   }
 
   return (
-      <Tab.Container
-        id="list-group-tabs-example"
-        defaultActiveKey="#link1"
-      >
-          <Row
-            style={{
-              justifyContent: 'center',
-            }}>
-            <Col style={{ height: '60vh'}} className="test" sm={3}>
-              <div style={{ maxHeight: '100%', overflow: 'scroll', padding: 16   }}>
-                <ListGroup>
-                  {requests.map(renderRequest)}
-                </ListGroup>
-              </div>
-            </Col>
-            <Col sm={6}>
-              <Tab.Content>
-                <Tab.Pane eventKey="#link1">
-                  <div style={{ backgroundColor: 'red' }}>
-                    <h1>Hello World</h1>
-                  </div>
-                </Tab.Pane>
-                <Tab.Pane eventKey="#link2">
-                  <h1>Test</h1>
-                </Tab.Pane>
-              </Tab.Content>
-            </Col>
-          </Row>
-          <Button onClick={onRequestPress} variant="primary">Primary</Button>
+      <Tab.Container id="list-group-tabs-example" >
+        <Row
+          style={{
+            justifyContent: 'center',
+          }}>
+          <Col className="test" sm={3}>
+            <div style={{ maxHeight: '60vh', overflow: 'scroll', padding: 16 }}>
+              <ListGroup>
+                {requests.map(renderRequest)}
+              </ListGroup>
+            </div>
+          </Col>
+          <Col sm={6}>
+            <Tab.Content>
+              {requests.map(renderDetail)}
+            </Tab.Content>
+          </Col>
+        </Row>
       </Tab.Container>
   )
 }

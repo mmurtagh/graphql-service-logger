@@ -4,6 +4,10 @@ export function getRequest (id) {
     return requests[id]
 }
 
+export function getRequests () {
+    return Object.keys(requests).map((id) => requests[id].json)
+}
+
 export function createRequest (id, timeStamp) {
     requests[id] = new Request(id, timeStamp)
 }

@@ -1,5 +1,5 @@
 export class ServiceCall {
-  constructor ({ uri, method, headers }) {
+  constructor ({ uri, method = 'GET', headers }) {
     this.uri = uri
     this.method = method
     this.headers = headers
