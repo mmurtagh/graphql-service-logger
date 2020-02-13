@@ -11,7 +11,7 @@ export function ServiceCall ({ uri, method, headers }) {
         <Container>
             <Row>
                 <Col>
-                    <Table striped small bordered hover variant="dark">
+                    <Table small striped size="sm" bordered hover variant="dark">
                         <tbody>
                             <tr style={{ width: 50 }}>
                                 <td>URL</td>

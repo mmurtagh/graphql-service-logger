@@ -1,23 +1,9 @@
-import express, { request } from 'express'
 import { createRequest, getRequest, getRequests } from './request'
 import { ServiceCall } from './serviceCall'
 
 class Logger {
 
     static port = 5000
-
-    startServer () {
-        const app = express()
-
-        app.use(express.json())
-        app.use(express.static(`${__dirname}/../client/build`));
-
-        app.get('/log/service-request', (req,res) => res.json(getRequests()))
-
-        app.get('/')
-
-        app.listen(Logger.port, () => console.log('Listening'))
-    }
 
     createRequest (id, timeStamp) {
         createRequest(id, timeStamp)
@@ -50,7 +36,6 @@ export const logger = {
 
         return loggerSingleton
     },
-    startServer: () => logger.current.startServer(),
     createRequest: (id, timeStamp) => logger.current.createRequest(id, timeStamp),
     addQuery: (id, query) => logger.current.addQuery(id, query),
     addServiceCall: (id, uri, method, headers) => logger.current.addServiceCall(id, uri, method, headers),

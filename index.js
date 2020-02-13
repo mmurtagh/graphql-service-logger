@@ -1,18 +1,7 @@
-import { logger } from './src/server/logger'
+const { logger } = require('./lib/plugin/logger')
+const { loggerPlugin } = require('./lib/plugin/plugin')
 
-logger.startServer()
-
-logger.createRequest('1234', Date.now())
-
-logger.addQuery('1234', 'cart')
-
-logger.addServiceCall('1234', 'https://google.com', 'POST', { Accept: 'application/json' } )
-
-logger.createRequest('5678', Date.now())
-
-logger.addQuery('5678', 'tart')
-
-logger.addServiceCall('5678', 'https://test.com', 'PUT', { Accept: 'application/json' })
-logger.addServiceCall('5678', 'https://google.com', 'GET', { Accept: 'application/json' })
-
-logger.printRequests()
+module.exports = {
+  logger,
+  loggerPlugin,
+}

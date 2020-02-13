@@ -1,0 +1,1 @@
+https://schema.getpostman.com/collection/json/v2.1.0/draft-07/docs/index.html
