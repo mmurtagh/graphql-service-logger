@@ -21,7 +21,7 @@ export function App(props) {
   const renderRequest = (
     {
       id,
-      query,
+      name,
       timeStamp,
     },
     index
@@ -35,7 +35,7 @@ export function App(props) {
         <Container>
             <Row>
               <Col style={{ fontWeight: 'bold' }}>
-                {query}
+                {name}
               </Col>
               <Col style={{ textAlign: 'right' }}>
                 {moment(timeStamp).format('h:mm:ss a MM/DD')}

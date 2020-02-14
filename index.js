@@ -1,7 +1,9 @@
-const { logger } = require('./lib/plugin/logger')
 const { loggerPlugin } = require('./lib/plugin/plugin')
+const { Request } = require('./lib/plugin/request')
 
 module.exports = {
-  logger,
-  loggerPlugin,
+  plugin: loggerPlugin,
+  logServiceCall: (serviceCall, { requestId }) => {
+    Request.associateServiceCall(requestId, serviceCall)
+  }
 }

@@ -1,26 +1,33 @@
-export const requests = {}
-
-export function getRequest (id) {
-    return requests[id]
-}
-
-export function getRequests () {
-    return Object.keys(requests).map((id) => requests[id].json)
-}
-
-export function createRequest (id, timeStamp) {
-    requests[id] = new Request(id, timeStamp)
-}
+import { ServiceCall } from "./serviceCall"
 
 export class Request {
-    serviceCalls = []
+    static requests = {}
+
+    static getRequest (id) {
+        return Request.requests[id]
+    }
+
+    static getRequests (id) {
+        return Object.keys(Request.requests).map((key) => Request.requests[key])
+    }
+
+    static createRequest (id, timeStamp) {
+        const request = new Request(id, timeStamp)
+        Request.requests[id] = request
+    }
+
+    static associateServiceCall (id, serviceCall) {
+        Request.getRequest(id).addServiceCall(new ServiceCall(serviceCall))
+    }
+
+    _serviceCalls = []
 
     _isErrored = false
     _isComplete = false
 
     constructor (id, timeStamp) {
-        this.id = id
-        this.timeStamp = timeStamp
+        this._id = id
+        this._timeStamp = timeStamp
     }
 
     set name (name) {
@@ -40,33 +47,34 @@ export class Request {
     }
 
     set isComplete (isComplete) {
-        this_.isComplete = isComplete
+        this._isComplete = isComplete
     }
 
     addServiceCall (serviceCall) {
-        this.serviceCalls.push(serviceCall)
+        this. _serviceCalls.push(serviceCall)
     }
 
     get json () {
         const {
-            id,
+            _id,
             _name,
             _query,
             _variables,
             _isErrored,
             _isComplete,
-            timeStamp,
-            serviceCalls
+            _timeStamp,
+            _serviceCalls
         } = this
 
         return {
-            id,
+            id: _id,
+            name: _name,
             query: _query,
             variables: _variables,
             isErrored: _isErrored,
             isComplete: _isComplete,
-            timeStamp,
-            serviceCalls: serviceCalls.map((serviceCall) => serviceCall.json)
+            timeStamp: _timeStamp,
+            serviceCalls: _serviceCalls.map((serviceCall) => serviceCall.json)
         }
     }
 }

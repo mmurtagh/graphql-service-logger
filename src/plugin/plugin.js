@@ -1,11 +1,13 @@
-import { logger } from './logger'
+import { Request } from './request'
 import { startServer } from '../server'
 
 export const loggerPlugin = {
   serverWillStart () {
     startServer()
   },
-  requestDidStart(context) {
+  requestDidStart({ context: { requestId } }) {
+    Request.createRequest(requestId, Date.now())
+
     return {
       didResolveOperation({
         operation: {
@@ -18,16 +20,16 @@ export const loggerPlugin = {
       }) {
         const names = selections.map(({ name: { value } = {} }) => value)
 
-        // const request = logger.getRequest(requestId)
-        // request.setName(names)
-        // request.setQuery(query)
-        // request.setVariables(variables)
+        const request = Request.getRequest(requestId)
+        request.name = names.join(' & ')
+        request.query = query
+        request.variables = variables
       },
-      willSendResponse(context) {
-        // logger.getRequest(requestId).complete()
+      willSendResponse({ context: { requestId }}) {
+        Request.getRequest(requestId).isComplete = true
       },
-      didEncounterErrors({ errors }) {
-        // logger.getRequest(requestId).setErrored()
+      didEncounterErrors() {
+        Request.getRequest(requestId).isErrored = true
       },
     }
   },
