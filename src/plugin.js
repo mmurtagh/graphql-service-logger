@@ -19,11 +19,15 @@ export const loggerPlugin = {
         request: { query, variables },
       }) {
         const names = selections.map(({ name: { value } = {} }) => value)
+        const name = names.join(' & ')
 
         const request = Request.getRequest(requestId)
-        request.name = names.join(' & ')
+        request.name = name
         request.query = query
         request.variables = variables
+        if (name === '__schema') {
+          request.isIntrospectionQuery = true
+        }
       },
       willSendResponse({ context: { requestId }}) {
         Request.getRequest(requestId).isComplete = true

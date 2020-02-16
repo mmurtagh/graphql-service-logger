@@ -34,9 +34,7 @@ export function App(props) {
       isErrored,
     },
     index
-  ) => {
-    console.log(isErrored)
-    
+  ) => {    
     return (
       <ListGroup.Item
         action

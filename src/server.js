@@ -3,13 +3,17 @@ import express, { request } from 'express'
 
 export function startServer (port = 5000) {
   const app = express()
-  console.log(`${__dirname}/../client/build`)
 
   app.use(express.json())
   app.use(express.static(`${__dirname}/../client/build`));
 
   app.get('/log/service-request', (req, res) => {
-    res.json(Request.getRequests().map((request) => request.json))
+
+    const requests = Request.getRequests()
+      .map((request) => request.json)
+      .filter(({ isComplete, isIntrospectionQuery }) => isComplete && !isIntrospectionQuery)
+      .sort((req1, req2) => req2.timeStamp - req1.timeStamp)
+    res.json(requests)
   })
 
   app.get('/')

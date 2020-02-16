@@ -24,6 +24,7 @@ export class Request {
 
     _isErrored = false
     _isComplete = false
+    _isIntrospectionQuery = false
 
     constructor (id, timeStamp) {
         this._id = id
@@ -35,7 +36,6 @@ export class Request {
     }
 
     set query(query) {
-        console.log(query)
         this._query = query
     }
 
@@ -51,6 +51,10 @@ export class Request {
         this._isComplete = isComplete
     }
 
+    set isIntrospectionQuery (isIntrospectionQuery) {
+        this._isIntrospectionQuery = isIntrospectionQuery
+    }
+
     addServiceCall (serviceCall) {
         this. _serviceCalls.push(serviceCall)
     }
@@ -64,7 +68,8 @@ export class Request {
             _isErrored,
             _isComplete,
             _timeStamp,
-            _serviceCalls
+            _serviceCalls,
+            _isIntrospectionQuery,
         } = this
 
         return {
@@ -75,7 +80,8 @@ export class Request {
             isErrored: _isErrored,
             isComplete: _isComplete,
             timeStamp: _timeStamp,
-            serviceCalls: _serviceCalls.map((serviceCall) => serviceCall.json)
+            isIntrospectionQuery: _isIntrospectionQuery,
+            serviceCalls: _serviceCalls.map((serviceCall) => serviceCall.json),
         }
     }
 }

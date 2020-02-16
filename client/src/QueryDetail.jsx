@@ -7,8 +7,7 @@ import Card from 'react-bootstrap/Card'
 import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
-import { useAccordionToggle } from 'react-bootstrap/AccordionToggle';
-import ListGroup from 'react-bootstrap/ListGroup'
+
 
 export function QueryDetail ({ id, query, variables = {} }) {
     const [ isToggled, setIsToggled ] = useState(false)
@@ -16,12 +15,11 @@ export function QueryDetail ({ id, query, variables = {} }) {
     return (
     <Container>
         <Row>
-            <Col md="6">
-                <Accordion as={Card} bg="secondary" text="white" >
+            <Col md="8">
+                <Accordion as={Card} bg="dark" border="secondary">
                     <Accordion.Toggle
                         as={Card.Header}
-                        eventKey="0"
-                        style={{ width: '100%' }}
+                        eventKey={`query-accordion-${id}`}
                         onClick={() => setIsToggled(!isToggled)}
                     >
                         <Container>
@@ -35,20 +33,39 @@ export function QueryDetail ({ id, query, variables = {} }) {
                             </Row>
                         </Container>
                     </Accordion.Toggle>
-                    <Accordion.Collapse style={{ width: '100%' }} eventKey="0">
-                        <div
+                    <Accordion.Collapse eventKey={`query-accordion-${id}`}>
+                        <Row
+                            noGutters
                             style={{
                                 width: '100%',
                                 overflow: 'scroll',
-                                backgroundColor: '#1e1e1e',
                                 padding: 16,
                             }}>
-                            <pre style={{ color: 'white' }}>{query}</pre>
-                        </div>
+                            <Col md="10">
+                                <pre
+                                    style={{
+                                        backgroundColor: '#1e1e1e',
+                                        flex: 1,
+                                        padding: 16,
+                                        marginRight: 16,
+                                        color: 'white'
+                                    }}>
+                                        {query}
+                                </pre>
+                            </Col>
+                            <Col md="2">
+                                <Button
+                                    onClick={() => navigator.clipboard.writeText(query)}
+                                    style={{ width: '100%' }}
+                                    variant="secondary">
+                                        Copy
+                                </Button>
+                            </Col>
+                        </Row>
                     </Accordion.Collapse>
                 </Accordion>
             </Col>
-            <Col md={6} style={{ height: '100%' }}>
+            <Col md={4} style={{ height: '100%' }}>
             <Table hover size="sm" borderless variant="dark">
                 <tbody>
                     <tr>
