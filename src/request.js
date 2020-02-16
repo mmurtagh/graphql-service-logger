@@ -35,6 +35,7 @@ export class Request {
     }
 
     set query(query) {
+        console.log(query)
         this._query = query
     }
 

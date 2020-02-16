@@ -1,5 +1,5 @@
-const { loggerPlugin } = require('./lib/plugin/plugin')
-const { Request } = require('./lib/plugin/request')
+const { loggerPlugin } = require('./lib/plugin')
+const { Request } = require('./lib/request')
 
 module.exports = {
   plugin: loggerPlugin,

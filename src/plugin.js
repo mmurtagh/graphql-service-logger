@@ -1,5 +1,5 @@
 import { Request } from './request'
-import { startServer } from '../server'
+import { startServer } from './server'
 
 export const loggerPlugin = {
   serverWillStart () {
