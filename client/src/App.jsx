@@ -11,9 +11,11 @@ import moment from 'moment'
 import fetch from 'node-fetch'
 import testData from './testdata.json'
 import Alert from 'react-bootstrap/Alert'
+import Button from 'react-bootstrap/Button'
 
 import { ServiceCall } from './ServiceCall'
 import { QueryDetail } from './QueryDetail'
+import { generatePostman } from './postman'
 
 
 export function App(props) {
@@ -70,9 +72,23 @@ export function App(props) {
             }
             <QueryDetail {...request} />
             <Card.Title style={{ paddingTop: 16}}>Service Calls</Card.Title>
-            {serviceCalls.map((serviceCall) => {
-              return <ServiceCall {...serviceCall} />
-            })}
+            <Container>
+              <Button
+                style={{ marginBottom: 16 }}
+                variant="secondary"
+                onClick={() => navigator.clipboard.writeText(generatePostman(request))}
+              >
+                Copy Postman Request
+              </Button>
+              {serviceCalls.map((serviceCall) => {
+                return (
+                  <>
+                    <ServiceCall {...serviceCall} />
+                    <br />
+                  </>
+                )
+              })}
+            </Container>
           </Card.Body>
         </Card>
       </Tab.Pane>
@@ -94,6 +110,11 @@ export function App(props) {
       })
   }
 
+  const onDeleteAll = () => {
+    fetch('http://localhost:5000/log/service-request', { method: 'DELETE'} )
+      .then(() => setRequests([]))
+  }
+
   return (
     <div style={{ margin: 16 }}>
       <JumboTron as={Card} bg="dark" text="white">
@@ -113,10 +134,17 @@ export function App(props) {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'stretch'
-                  
-                }}                  
+                }}
               >
-                <Card.Title>Incoming Queries</Card.Title>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  paddingBottom: 16,
+                }}>
+                  <Card.Title>Incoming Queries</Card.Title>
+                  <Button onClick={onDeleteAll} variant="danger">Delete All</Button>
+                </div>
                 <div style={{ overflow: 'scroll' }}>
                   {requests.map(renderRequest)}
                 </div>

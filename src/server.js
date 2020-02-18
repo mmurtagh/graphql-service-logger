@@ -8,7 +8,6 @@ export function startServer (port = 5000) {
   app.use(express.static(`${__dirname}/../client/build`));
 
   app.get('/log/service-request', (req, res) => {
-
     const requests = Request.getRequests()
       .map((request) => request.json)
       .filter(({ isComplete, isIntrospectionQuery }) => isComplete && !isIntrospectionQuery)
@@ -16,8 +15,13 @@ export function startServer (port = 5000) {
     res.json(requests)
   })
 
+  app.delete('/log/service-request', (req, res) => {
+    Request.nukeRequests()
+    res.status(200).send()
+  })
+
   app.get('/')
 
-  app.listen(port, () => console.log('Listening'))
+  app.listen(port, () => console.log(`🌳 Service logger ready on port ${port}`))
 }
 

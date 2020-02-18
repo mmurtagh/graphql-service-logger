@@ -9,13 +9,14 @@ import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
 
-export function QueryDetail ({ id, query, variables = {} }) {
+export function QueryDetail (request) {
+    const { id, query, variables = {}, headers = {} } = request
     const [ isToggled, setIsToggled ] = useState(false)
 
     return (
     <Container>
         <Row>
-            <Col md="8">
+            <Col md="12">
                 <Accordion as={Card} bg="dark" border="secondary">
                     <Accordion.Toggle
                         as={Card.Header}
@@ -41,7 +42,7 @@ export function QueryDetail ({ id, query, variables = {} }) {
                                 overflow: 'scroll',
                                 padding: 16,
                             }}>
-                            <Col md="10">
+                            <Col md="11">
                                 <pre
                                     style={{
                                         backgroundColor: '#1e1e1e',
@@ -53,7 +54,7 @@ export function QueryDetail ({ id, query, variables = {} }) {
                                         {query}
                                 </pre>
                             </Col>
-                            <Col md="2">
+                            <Col md="1">
                                 <Button
                                     onClick={() => navigator.clipboard.writeText(query)}
                                     style={{ width: '100%' }}
@@ -65,8 +66,8 @@ export function QueryDetail ({ id, query, variables = {} }) {
                     </Accordion.Collapse>
                 </Accordion>
             </Col>
-            <Col md={4} style={{ height: '100%' }}>
-            <Table hover size="sm" borderless variant="dark">
+            <Col md="12" style={{ height: '100%' }}>
+            <Table size="sm" hover variant="dark">
                 <tbody>
                     <tr>
                         <td style={{ width: 100 }}>Request ID</td>
@@ -80,6 +81,18 @@ export function QueryDetail ({ id, query, variables = {} }) {
                                 displayDataTypes={false}
                                 name={false}
                                 src={variables}
+                                theme="twilight"
+                            />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Headers</td>
+                        <td>
+                            <ReactJson
+                                collapsed={true}
+                                displayDataTypes={false}
+                                name={false}
+                                src={headers}
                                 theme="twilight"
                             />
                         </td>

@@ -15,7 +15,7 @@ export const loggerPlugin = {
             selections = [],
           } = {},
         } = {},
-        context: { requestId },
+        context: { requestId, requestHeaders },
         request: { query, variables },
       }) {
         const names = selections.map(({ name: { value } = {} }) => value)
@@ -25,6 +25,7 @@ export const loggerPlugin = {
         request.name = name
         request.query = query
         request.variables = variables
+        request.headers = requestHeaders
         if (name === '__schema') {
           request.isIntrospectionQuery = true
         }

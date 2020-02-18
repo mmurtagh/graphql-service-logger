@@ -20,8 +20,11 @@ export class Request {
         Request.getRequest(id).addServiceCall(new ServiceCall(serviceCall))
     }
 
-    _serviceCalls = []
+    static nukeRequests () {
+        Request.requests = {}
+    }
 
+    _serviceCalls = []
     _isErrored = false
     _isComplete = false
     _isIntrospectionQuery = false
@@ -55,33 +58,39 @@ export class Request {
         this._isIntrospectionQuery = isIntrospectionQuery
     }
 
+    set headers(headers) {
+        this._headers = headers
+    }
+
     addServiceCall (serviceCall) {
         this. _serviceCalls.push(serviceCall)
     }
 
     get json () {
         const {
+            _headers,
             _id,
+            _isComplete,
+            _isErrored,
+            _isIntrospectionQuery,
             _name,
             _query,
-            _variables,
-            _isErrored,
-            _isComplete,
-            _timeStamp,
             _serviceCalls,
-            _isIntrospectionQuery,
+            _timeStamp,
+            _variables,
         } = this
 
         return {
+            headers: _headers,
             id: _id,
+            isComplete: _isComplete,
+            isErrored: _isErrored,
+            isIntrospectionQuery: _isIntrospectionQuery,
             name: _name,
             query: _query,
-            variables: _variables,
-            isErrored: _isErrored,
-            isComplete: _isComplete,
-            timeStamp: _timeStamp,
-            isIntrospectionQuery: _isIntrospectionQuery,
             serviceCalls: _serviceCalls.map((serviceCall) => serviceCall.json),
+            timeStamp: _timeStamp,
+            variables: _variables,
         }
     }
 }
