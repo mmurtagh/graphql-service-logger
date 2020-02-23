@@ -8,6 +8,23 @@ import Button from 'react-bootstrap/Button'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
 
+import { content, spacing } from './constants'
+
+const styles = {
+    queryContainer: {
+        width: '100%',
+        overflow: 'auto',
+        padding: spacing,
+    },
+    queryText: {
+        backgroundColor: '#1e1e1e',
+        flex: 1,
+        padding: spacing,
+        marginRight: spacing,
+        color: 'white'
+    },
+}
+
 
 export function QueryDetail (request) {
     const { id, query, variables = {}, headers = {} } = request
@@ -25,9 +42,7 @@ export function QueryDetail (request) {
                     >
                         <Container>
                             <Row >
-                                <Col style={{ textAlign: 'left' }}>
-                                    Query
-                                </Col>
+                                <Col style={{ textAlign: 'left' }}>{content.queryHeader}</Col>
                                 <Col style={{ textAlign: 'right' }}>
                                     {`${isToggled ? '▼' : '▶'}`}
                                 </Col>
@@ -35,31 +50,17 @@ export function QueryDetail (request) {
                         </Container>
                     </Accordion.Toggle>
                     <Accordion.Collapse eventKey={`query-accordion-${id}`}>
-                        <Row
-                            noGutters
-                            style={{
-                                width: '100%',
-                                overflow: 'scroll',
-                                padding: 16,
-                            }}>
+                        <Row noGutters style={styles.queryContainer}>
                             <Col md="11">
-                                <pre
-                                    style={{
-                                        backgroundColor: '#1e1e1e',
-                                        flex: 1,
-                                        padding: 16,
-                                        marginRight: 16,
-                                        color: 'white'
-                                    }}>
-                                        {query}
-                                </pre>
+                                <pre style={styles.queryText}>{query}</pre>
                             </Col>
                             <Col md="1">
                                 <Button
                                     onClick={() => navigator.clipboard.writeText(query)}
                                     style={{ width: '100%' }}
-                                    variant="secondary">
-                                        Copy
+                                    variant="secondary"
+                                >
+                                    {content.copyButton}
                                 </Button>
                             </Col>
                         </Row>
@@ -70,11 +71,11 @@ export function QueryDetail (request) {
             <Table size="sm" hover variant="dark">
                 <tbody>
                     <tr>
-                        <td style={{ width: 100 }}>Request ID</td>
+                        <td style={{ width: 100 }}>{content.requestIdHeader}</td>
                         <td>{id}</td>
                     </tr>
                     <tr>
-                        <td>Variables</td>
+                        <td>{content.variablesHeader}</td>
                         <td>
                             <ReactJson
                                 collapsed={true}
@@ -86,7 +87,7 @@ export function QueryDetail (request) {
                         </td>
                     </tr>
                     <tr>
-                        <td>Headers</td>
+                        <td>{content.headersHeader}</td>
                         <td>
                             <ReactJson
                                 collapsed={true}

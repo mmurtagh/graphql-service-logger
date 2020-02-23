@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import moment from 'moment'
+import fetch from 'node-fetch'
 import Tab from 'react-bootstrap/Tab'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -7,16 +8,32 @@ import Container from 'react-bootstrap/Container'
 import ListGroup from 'react-bootstrap/ListGroup'
 import Card from 'react-bootstrap/Card'
 import JumboTron from 'react-bootstrap/Jumbotron'
-import moment from 'moment'
-import fetch from 'node-fetch'
 import testData from './testdata.json'
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { ServiceCall } from './ServiceCall'
 import { QueryDetail } from './QueryDetail'
 import { generatePostman } from './postman'
+import { content, spacing } from './constants'
 
+
+const styles = {
+  maxHeight: { height: '100%' },
+  incomingQueriesHeader: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: spacing,
+  },
+  incomingQueriesCard: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'stretch'
+  },
+  contentRow: { justifyContent: 'center', height: '60vh' },
+}
 
 export function App(props) {
   const [ requests, setRequests ] = useState([])
@@ -61,24 +78,22 @@ export function App(props) {
     const { id, serviceCalls, isErrored } = request
 
     return (
-      <Tab.Pane style={{ height: '100%', width: '100%' }} eventKey={id}>
-        <Card style={{ height: '100%', width: '100%', overflow: 'scroll' }} bg="dark" text="white" >
-          <Card.Body style={{ width: '100%' }}>
-            <Card.Title>Query Details</Card.Title>
+      <Tab.Pane style={styles.maxHeight} eventKey={id}>
+        <Card style={{ ...styles.maxHeight, overflow: 'auto' }} bg="dark" text="white">
+          <Card.Body>
+            <Card.Title>{content.queryDetails}</Card.Title>
             {isErrored &&
-              <Alert variant="danger">
-                An error was thrown while executing this query.
-              </Alert>
+              <Alert variant="danger">{content.queryErrorMessage}</Alert>
             }
             <QueryDetail {...request} />
-            <Card.Title style={{ paddingTop: 16}}>Service Calls</Card.Title>
+            <Card.Title style={{ paddingTop: spacing }}>{content.serviceCalls}</Card.Title>
             <Container>
               <Button
-                style={{ marginBottom: 16 }}
+                style={{ marginBottom: spacing }}
                 variant="secondary"
                 onClick={() => navigator.clipboard.writeText(generatePostman(request))}
               >
-                Copy Postman Request
+                {content.copyPostman}
               </Button>
               {serviceCalls.map((serviceCall) => {
                 return (
@@ -116,43 +131,32 @@ export function App(props) {
   }
 
   return (
-    <div style={{ margin: 16 }}>
+    <div style={{ margin: spacing }}>
       <JumboTron as={Card} bg="dark" text="white">
-        <h1 style={{ alignSelf: 'center' }}>GraphQL Service Logger</h1>
+        <h1 style={{ alignSelf: 'center' }}>{content.title}</h1>
       </JumboTron>
-      <Tab.Container style id="list-group-tabs-example" >
-        <Row style={{ justifyContent: 'center', height: '60vh' }}>
-          <Col className="test" style={{ height: '100%' }} md={4}>
+      <Tab.Container>
+        <Row style={styles.contentRow}>
+          <Col className="test" style={styles.maxHeight} md={4}>
             <ListGroup
               as={Card}
               bg="dark"
               text="white"
-              style={{ height: '100%' }}
+              style={styles.maxHeight}
             >
-              <Card.Body
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'stretch'
-                }}
-              >
-                <div style={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  paddingBottom: 16,
-                }}>
-                  <Card.Title>Incoming Queries</Card.Title>
-                  <Button onClick={onDeleteAll} variant="danger">Delete All</Button>
+              <Card.Body style={styles.incomingQueriesCard}>
+                <div style={styles.incomingQueriesHeader}>
+                  <Card.Title>{content.incomingQueries}</Card.Title>
+                  <Button onClick={onDeleteAll} variant="danger">{content.deleteButton}</Button>
                 </div>
-                <div style={{ overflow: 'scroll' }}>
+                <div style={{ overflow: 'auto' }}>
                   {requests.map(renderRequest)}
                 </div>
               </Card.Body>
             </ListGroup>
           </Col>
-          <Col style={{ height: '100%' }} md={8}>
-            <Tab.Content style={{ height: '100%' }}>
+          <Col style={styles.maxHeight} md={8}>
+            <Tab.Content style={styles.maxHeight}>
               {requests.map(renderDetail)}
             </Tab.Content>
           </Col>
