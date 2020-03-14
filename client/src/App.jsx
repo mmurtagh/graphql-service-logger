@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import moment from 'moment'
-import fetch from 'node-fetch'
 import Tab from 'react-bootstrap/Tab'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -8,9 +7,9 @@ import Container from 'react-bootstrap/Container'
 import ListGroup from 'react-bootstrap/ListGroup'
 import Card from 'react-bootstrap/Card'
 import JumboTron from 'react-bootstrap/Jumbotron'
-import testData from './testdata.json'
 import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
+import io from 'socket.io-client'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { ServiceCall } from './ServiceCall'
@@ -35,14 +34,15 @@ const styles = {
   contentRow: { justifyContent: 'center', height: '60vh' },
 }
 
+let socket
+
 export function App(props) {
   const [ requests, setRequests ] = useState([])
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development') {
-      setRequests(testData)
-    } else {
-      poll()
-    }
+    socket = io.connect('http://localhost:5000')    
+    socket.on('request', (request) => {
+      setRequests([ request, ...requests ])
+    })
   }, [])
 
   const renderRequest = (
@@ -110,24 +110,8 @@ export function App(props) {
     )
   }
 
-  const poll = () => {
-    fetch('http://localhost:5000/log/service-request')
-      .then(async (res) => {
-        const currentRequests = await res.json()
-        if (currentRequests.length !== requests.length) {
-          setRequests(currentRequests)
-        }
-
-        setTimeout(poll, 250)
-      })
-      .catch((e) => {
-        setTimeout(poll, 2000)
-      })
-  }
-
   const onDeleteAll = () => {
-    fetch('http://localhost:5000/log/service-request', { method: 'DELETE'} )
-      .then(() => setRequests([]))
+    setRequests([])
   }
 
   return (

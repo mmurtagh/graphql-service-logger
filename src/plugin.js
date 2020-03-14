@@ -1,5 +1,5 @@
 import { Request } from './request'
-import { startServer } from './server'
+import { startServer, sendRequest } from './server'
 
 export const loggerPlugin = {
   serverWillStart () {
@@ -31,10 +31,19 @@ export const loggerPlugin = {
         }
       },
       willSendResponse({ context: { requestId }}) {
-        Request.getRequest(requestId).isComplete = true
+        const request = Request.getRequest(requestId)
+        if (!request.isIntrospectionQuery) {
+          sendRequest(request)
+        } 
+        Request.delete(request.id)
       },
       didEncounterErrors() {
-        Request.getRequest(requestId).isErrored = true
+        const request = Request.getRequest(requestId)
+        request.isErrored = true
+        if (!request.isIntrospectionQuery) {
+          sendRequest(request)
+        }
+        Request.delete(request.id)
       },
     }
   },

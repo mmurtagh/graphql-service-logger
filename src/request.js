@@ -7,10 +7,6 @@ export class Request {
         return Request.requests[id]
     }
 
-    static getRequests (id) {
-        return Object.keys(Request.requests).map((key) => Request.requests[key])
-    }
-
     static createRequest (id, timeStamp) {
         const request = new Request(id, timeStamp)
         Request.requests[id] = request
@@ -20,8 +16,8 @@ export class Request {
         Request.getRequest(id).addServiceCall(new ServiceCall(serviceCall))
     }
 
-    static nukeRequests () {
-        Request.requests = {}
+    static delete (id) {
+        delete Request.requests[id]
     }
 
     _serviceCalls = []
@@ -50,8 +46,8 @@ export class Request {
         this._isErrored = isErrored
     }
 
-    set isComplete (isComplete) {
-        this._isComplete = isComplete
+    get isIntrospectionQuery() {
+        return this._isIntrospectionQuery
     }
 
     set isIntrospectionQuery (isIntrospectionQuery) {
@@ -70,7 +66,6 @@ export class Request {
         const {
             _headers,
             _id,
-            _isComplete,
             _isErrored,
             _isIntrospectionQuery,
             _name,
@@ -83,7 +78,6 @@ export class Request {
         return {
             headers: _headers,
             id: _id,
-            isComplete: _isComplete,
             isErrored: _isErrored,
             isIntrospectionQuery: _isIntrospectionQuery,
             name: _name,
@@ -94,4 +88,3 @@ export class Request {
         }
     }
 }
-
