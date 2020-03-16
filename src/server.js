@@ -17,3 +17,4 @@ export function startServer (port = 5000) {
 export function sendRequest (request) {
   io.emit('request', request.json)
 }
+

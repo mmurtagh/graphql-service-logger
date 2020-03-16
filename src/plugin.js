@@ -37,13 +37,9 @@ export const loggerPlugin = {
         } 
         Request.delete(request.id)
       },
-      didEncounterErrors() {
+      didEncounterErrors({ errors }) {
         const request = Request.getRequest(requestId)
-        request.isErrored = true
-        if (!request.isIntrospectionQuery) {
-          sendRequest(request)
-        }
-        Request.delete(request.id)
+        request.error = errors
       },
     }
   },

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import moment from 'moment'
 import Tab from 'react-bootstrap/Tab'
 import Row from 'react-bootstrap/Row'
@@ -7,7 +7,6 @@ import Container from 'react-bootstrap/Container'
 import ListGroup from 'react-bootstrap/ListGroup'
 import Card from 'react-bootstrap/Card'
 import JumboTron from 'react-bootstrap/Jumbotron'
-import Alert from 'react-bootstrap/Alert'
 import Button from 'react-bootstrap/Button'
 import io from 'socket.io-client'
 
@@ -16,6 +15,7 @@ import { ServiceCall } from './ServiceCall'
 import { QueryDetail } from './QueryDetail'
 import { generatePostman } from './postman'
 import { content, spacing } from './constants'
+import { ExpandableDetail } from './ExpandableDetail'
 
 
 const styles = {
@@ -34,14 +34,13 @@ const styles = {
   contentRow: { justifyContent: 'center', height: '60vh' },
 }
 
-let socket
-
 export function App(props) {
-  const [ requests, setRequests ] = useState([])
+  const [ requests, setRequests ] = useState([] )
+
   useEffect(() => {
-    socket = io.connect('http://localhost:5000')    
-    socket.on('request', (request) => {
-      setRequests([ request, ...requests ])
+    const socket = io.connect('http://localhost:5000')    
+    socket.on('request',(request) => {
+      setRequests((prevRequests) => [ request, ...prevRequests ]) 
     })
   }, [])
 
@@ -50,7 +49,7 @@ export function App(props) {
       id,
       name,
       timeStamp,
-      isErrored,
+      error,
     },
     index
   ) => {    
@@ -58,7 +57,7 @@ export function App(props) {
       <ListGroup.Item
         action
         eventKey={id}
-        variant={isErrored ? "danger" : "dark"}
+        variant={error === null? "dark" : "danger"}
       >
         <Container>
           <Row>
@@ -75,15 +74,22 @@ export function App(props) {
   }
 
   const renderDetail = (request) => {
-    const { id, serviceCalls, isErrored } = request
+    const { id, serviceCalls, error } = request
 
     return (
       <Tab.Pane style={styles.maxHeight} eventKey={id}>
         <Card style={{ ...styles.maxHeight, overflow: 'auto' }} bg="dark" text="white">
           <Card.Body>
             <Card.Title>{content.queryDetails}</Card.Title>
-            {isErrored &&
-              <Alert variant="danger">{content.queryErrorMessage}</Alert>
+            {error !== null &&
+            <Container>
+              <ExpandableDetail
+                isDanger
+                id='Error'
+                body={JSON.stringify(error, null, 4)}
+                style={{ marginBottom: spacing }}
+              />
+            </Container>
             }
             <QueryDetail {...request} />
             <Card.Title style={{ paddingTop: spacing }}>{content.serviceCalls}</Card.Title>

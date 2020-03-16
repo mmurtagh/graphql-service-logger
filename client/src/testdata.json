@@ -103,7 +103,7 @@
                 }
             }
         ],
-        "isErrored": true
+        "error": {}
     },
     {
         "id": "78",
