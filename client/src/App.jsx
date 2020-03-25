@@ -16,6 +16,7 @@ import { QueryDetail } from './QueryDetail'
 import { generatePostman } from './postman'
 import { content, spacing } from './constants'
 import { ExpandableDetail } from './ExpandableDetail'
+import testData from './testdata.json'
 
 
 const styles = {
@@ -38,6 +39,11 @@ export function App(props) {
   const [ requests, setRequests ] = useState([] )
 
   useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      setRequests(testData)
+      return
+    }
+
     const socket = io.connect('http://localhost:5000')    
     socket.on('request',(request) => {
       setRequests((prevRequests) => [ request, ...prevRequests ]) 
@@ -57,7 +63,7 @@ export function App(props) {
       <ListGroup.Item
         action
         eventKey={id}
-        variant={error === null? "dark" : "danger"}
+        variant={!error ? "dark" : "danger"}
       >
         <Container>
           <Row>
@@ -76,12 +82,13 @@ export function App(props) {
   const renderDetail = (request) => {
     const { id, serviceCalls, error } = request
 
+    console.log(!!error)
     return (
       <Tab.Pane style={styles.maxHeight} eventKey={id}>
         <Card style={{ ...styles.maxHeight, overflow: 'auto' }} bg="dark" text="white">
           <Card.Body>
             <Card.Title>{content.queryDetails}</Card.Title>
-            {error !== null &&
+            {!!error  &&
             <Container>
               <ExpandableDetail
                 isDanger
@@ -92,8 +99,8 @@ export function App(props) {
             </Container>
             }
             <QueryDetail {...request} />
-            <Card.Title style={{ paddingTop: spacing }}>{content.serviceCalls}</Card.Title>
             <Container>
+              <Card.Title style={{ paddingTop: spacing }}>{content.serviceCalls}</Card.Title>
               <Button
                 style={{ marginBottom: spacing }}
                 variant="secondary"
@@ -101,6 +108,8 @@ export function App(props) {
               >
                 {content.copyPostman}
               </Button>
+            </Container>
+            <Container>
               {serviceCalls.map((serviceCall) => {
                 return (
                   <>

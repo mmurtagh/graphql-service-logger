@@ -1,7 +1,7 @@
 export const content = {
     queryDetails: 'Query Details',
     queryErrorMessage: 'An error was thrown while executing this query.',
-    serivceCalls: 'Service Calls',
+    serviceCalls: 'Service Calls',
     copyPostman: 'Copy Postman Request',
     title: 'GraphQL Service Logger',
     incomingQueries: 'Incoming Queries',
