@@ -5,7 +5,7 @@ export const loggerPlugin = {
   serverWillStart () {
     startServer()
   },
-  requestDidStart({ context: { requestId } }) {
+  requestDidStart({ context: { serviceLogger: { requestId } } }) {
     Request.createRequest(requestId, Date.now())
 
     return {
@@ -15,7 +15,7 @@ export const loggerPlugin = {
             selections = [],
           } = {},
         } = {},
-        context: { requestId, requestHeaders },
+        context: { serviceLogger: { requestId }, requestHeaders },
         request: { query, variables },
       }) {
         const names = selections.map(({ name: { value } = {} }) => value)
@@ -30,7 +30,7 @@ export const loggerPlugin = {
           request.isIntrospectionQuery = true
         }
       },
-      willSendResponse({ context: { requestId }}) {
+      willSendResponse({ context: { serviceLogger: { requestId } }}) {
         const request = Request.getRequest(requestId)
         if (!request.isIntrospectionQuery) {
           sendRequest(request)
