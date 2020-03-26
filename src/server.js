@@ -12,6 +12,7 @@ export function startServer (port = 5000) {
   io = SocketIO(server)
   
   server.listen(port)
+  console.log(`🌳 Service logger ready at http://localhost:${port}/`)
 }
 
 export function sendRequest (request) {
