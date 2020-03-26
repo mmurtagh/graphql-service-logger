@@ -13,7 +13,7 @@ export class Request {
   }
 
   static associateServiceCall (id, serviceCall) {
-    Request.getRequest(id)?.addServiceCall(new ServiceCall(serviceCall))
+    Request.getRequest(id).addServiceCall(new ServiceCall(serviceCall))
   }
 
   static delete (id) {
